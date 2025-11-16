@@ -22,7 +22,7 @@ namespace Technoteam
 
         private const int MaxSpeed = 2000;
         private double _timeAboveTempLimit = 0;
-        private Random _rand = new Random(10); //TODO: remove the seed
+        private Random _rand = new Random();
         private const int SpeedChangeRate = 100; //RPM per second
         private const int EmergencyDecelerationRate = 500; //RPM per second
         private const int AmbientTemperature = 25;

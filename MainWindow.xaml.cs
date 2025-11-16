@@ -12,6 +12,9 @@ namespace Technoteam
         private readonly DispatcherTimer _timer = new();
         private readonly Stopwatch _stopwatch = new();
 
+        private readonly PlcDataLogger _logger = new();
+        private double _logAccumulator;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -47,6 +50,22 @@ namespace Technoteam
 
             foreach (var panel in _panels)
                 panel.Refresh();
+
+            _logAccumulator += dt;
+            if (_logAccumulator >= 5.0)
+            {
+                LogAllPlcs();
+                _logAccumulator = 0;
+            }
+        }
+
+        private void LogAllPlcs()
+        {
+            for (int i = 0; i < _plcs.Count; i++)
+            {
+                var plc = _plcs[i];
+                _logger.LogSnapshot(i + 1, plc);
+            }
         }
 
         private void CreatePlcs(int count)
@@ -112,6 +131,13 @@ namespace Technoteam
             {
                 plc.ManualEmergencyStopRequested = true;
             }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            _timer.Stop();
+            _logger.Dispose();
         }
     }
 }
