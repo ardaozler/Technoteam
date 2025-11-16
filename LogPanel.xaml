@@ -39,8 +39,21 @@
                   Grid.Row="3"
                   Grid.Column="1"
                   AutoGenerateColumns="True"
-                  IsReadOnly="True"/>
-        
+                  IsReadOnly="True">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="MaintenanceNeeded">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding State}" Value="EmergencyStop">
+                            <Setter Property="Background" Value="LightCoral"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
         <Button x:Name="ClearLogsButton"
                 Content="Clear Logs"
                 Width="120"
