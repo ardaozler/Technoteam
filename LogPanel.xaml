@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="Technoteam.LogPanel"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+            xmlns:local="clr-namespace:Technoteam"
+            MinWidth="300"
+            MinHeight="250" FontSize="20">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10">
+            <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker x:Name="FromDatePicker" Margin="0,0,10,0"/>
+
+            <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker x:Name="ToDatePicker" Margin="0,0,10,0"/>
+
+            <TextBlock Text="PLC:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox x:Name="PlcFilterComboBox" Width="120" Margin="0,0,10,0" Background="LightGray"/>
+
+            <CheckBox x:Name="OnlyAlarmsCheckBox"
+                      Content="Only alarms"
+                      VerticalAlignment="Center"
+                      Margin="0,0,10,0"/>
+
+            <Button x:Name="LoadLogsButton" Content="Load logs" Width="120"/>
+        </StackPanel>
+
+        <DataGrid x:Name="LogDataGrid"
+                  Grid.Row="3"
+                  Grid.Column="1"
+                  AutoGenerateColumns="True"
+                  IsReadOnly="True"/>
+        
+        <Button x:Name="ClearLogsButton"
+                Content="Clear Logs"
+                Width="120"
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Background="Red"
+                Margin="10,0,0,10"/>
+    </Grid>
+</UserControl>

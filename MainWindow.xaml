@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        
+
         <TabControl Grid.Row="1" Grid.Column="1">
             <TabItem Header="Dashboard">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -56,6 +56,9 @@
 
                     <TextBlock Text="(Changes will affect running PLCs immediately)" FontSize="14" Foreground="Gray"/>
                 </StackPanel>
+            </TabItem>
+            <TabItem Header="PLC Logs">
+                <local:LogPanel x:Name="PLCLogControl"/>
             </TabItem>
         </TabControl>
 

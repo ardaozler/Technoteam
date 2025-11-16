@@ -88,6 +88,8 @@ namespace Technoteam
 
                 PlcPanelHost.Children.Add(panel);
             }
+
+            PLCLogControl.SetPlcCount(count);
         }
 
         private void ApplyPlcCountButton_OnClick(object sender, RoutedEventArgs e)
@@ -116,8 +118,12 @@ namespace Technoteam
                 return;
             }
 
-            if (rpm < 0) rpm = 0;
-            if (rpm > 2000) rpm = 2000;
+            if (rpm < 0 || rpm > 2000)
+            {
+                MessageBox.Show("Please choose an RPM value between 0 and 2000.", "Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             foreach (var plc in _plcs)
             {
