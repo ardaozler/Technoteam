@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="Technoteam.PlcPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Technoteam"
+             MinWidth="300"
+             MinHeight="250" FontSize="20">
+    <Border Background="AntiqueWhite" Padding="10" CornerRadius="10" Margin="10">
+        <StackPanel Margin="20">
+            <TextBlock x:Name="TitleText" Text="PlcName" FontWeight="Bold" FontSize="25"/>
+
+            <TextBlock x:Name="TempLabel" Text="Temperature (°C)"/>
+            <ProgressBar x:Name="TempBar" Height="20" Maximum="150" Margin="0,0,0,5"/>
+            <TextBlock x:Name="TempValue" FontSize="18" Text="0 °C" Margin="0,0,0,10"/>
+
+            <TextBlock x:Name="ActualSpeedLabel" Text="Actual Speed"/>
+            <ProgressBar x:Name="ActualSpeedBar" Height="20" Maximum="2000" Margin="0,0,0,5"/>
+            <TextBlock x:Name="ActualSpeedValue" FontSize="18" Text="0 RPM" Margin="0,0,0,10"/>
+
+            <TextBlock x:Name="TargetSpeedLabel" FontSize="18" Text="Target Speed"/>
+            <Slider x:Name="TargetSpeedSlider"
+                    Minimum="0"
+                    Maximum="2000"
+                    Value="0"
+                    TickFrequency="100"
+                    IsSnapToTickEnabled="True"
+                    Margin="0,0,0,5"/>
+            <TextBlock x:Name="TargetSpeedValue" FontSize="18" Text="0 RPM" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Ellipse x:Name="StatusLight"
+                         Width="30" Height="30"
+                         Fill="Gray"
+                         Stroke="Black"
+                         StrokeThickness="2"
+                         Margin="0,0,10,0"/>
+                <TextBlock x:Name="StatusLabel" Text="Normal"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                <Button x:Name="StartButton" Content="Start" Width="100" Height="40" Margin="0,0,10,0"/>
+                <Button x:Name="EmergencyStopButton" Content="Emergency Stop" Background="Red"  Width="200" Height="40"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -169,6 +169,7 @@ namespace Technoteam
 
         private void EmergencyStopRequested()
         {
+            if (State == PlcState.MaintenanceNeeded) return;
             Debug.WriteLine("Emergency stop requested!");
             State = PlcState.EmergencyStop;
         }

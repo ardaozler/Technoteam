@@ -1,48 +1,31 @@
 ﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Technoteam
 {
     public partial class MainWindow : Window
     {
-        private readonly PlcSimulator _plc = new();
+        private readonly List<PlcSimulator> _plcs = new();
+        private readonly List<PlcPanel> _panels = new();
+
         private readonly DispatcherTimer _timer = new();
         private readonly Stopwatch _stopwatch = new();
-        private bool _overheatFlash;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _plc.Start();
-
-            ConfigureUIEvents();
+            ConfigureUiEvents();
+            CreatePlcs(4);//default 4 PLCs
             ConfigureTimer();
         }
 
-        private void ConfigureUIEvents()
+        private void ConfigureUiEvents()
         {
-            EmergencyStopButton1.Click += (s, e) => EmergencyStopButton1_OnClick(s, e);
-            StartButton1.Click += (s, e) => StartButton1_OnClick(s, e);
-            TargetSpeedSlider1.ValueChanged += (s, e) => TargetSpeedSlider1_OnValueChanged(s, e);
-        }
-
-        private void TargetSpeedSlider1_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            _plc.TargetSpeed = (int)TargetSpeedSlider1.Value;
-            TargetSpeedValue1.Text = $"{_plc.TargetSpeed} RPM";
-        }
-
-        private void StartButton1_OnClick(object sender, RoutedEventArgs e)
-        {
-            _plc.ManualStartRequested = true;
-        }
-
-        private void EmergencyStopButton1_OnClick(object sender, RoutedEventArgs e)
-        {
-            _plc.ManualEmergencyStopRequested = true;
+            ApplyPlcCountButton.Click += ApplyPlcCountButton_OnClick;
+            ApplyDefaultRpmButton.Click += ApplyDefaultRpmButton_OnClick;
+            StopAllButton.Click += StopAllButton_OnClick;
         }
 
         private void ConfigureTimer()
@@ -59,78 +42,75 @@ namespace Technoteam
             var dt = _stopwatch.Elapsed.TotalSeconds;
             _stopwatch.Restart();
 
-            _plc.Update(dt);
+            foreach (var plc in _plcs)
+                plc.Update(dt);
 
-            if (_plc.IsOverheatWarning)
-            {
-                _overheatFlash = !_overheatFlash;
-            }
-            else
-            {
-                _overheatFlash = false;
-            }
-
-            UpdateUiFromPlc();
+            foreach (var panel in _panels)
+                panel.Refresh();
         }
 
-        private void UpdateUiFromPlc()
+        private void CreatePlcs(int count)
         {
-            TempBar1.Value = _plc.Temperature;
-            if (_plc.Temperature >= PlcSimulator.TemperatureLimit)
+            if (count <= 0) return;
+
+            _plcs.Clear();
+            _panels.Clear();
+            PlcPanelHost.Children.Clear();
+
+            for (int i = 0; i < count; i++)
             {
-                TempBar1.Foreground = Brushes.Red;
+                var plc = new PlcSimulator();
+                plc.Start();
+                _plcs.Add(plc);
+
+                var panel = new PlcPanel();
+                panel.Initialize(plc, i + 1);
+                _panels.Add(panel);
+
+                PlcPanelHost.Children.Add(panel);
             }
-            else
+        }
+
+        private void ApplyPlcCountButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!int.TryParse(PlcCountTextBox.Text, out var count))
             {
-                TempBar1.Foreground = Brushes.Green;
+                MessageBox.Show("Invalid PLC count", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
-            TempValue1.Text = $"{_plc.Temperature} °C";
 
-            ActualSpeedBar1.Value = _plc.ActualSpeed;
-            ActualSpeedValue1.Text = $"{_plc.ActualSpeed} RPM";
-
-            if ((int)TargetSpeedSlider1.Value != _plc.TargetSpeed)
+            if (count <= 0 || count > 200)
             {
-                TargetSpeedSlider1.Value = _plc.TargetSpeed;
+                MessageBox.Show("Please choose a PLC count between 1 and 200.", "Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
-            TargetSpeedValue1.Text = $"{_plc.TargetSpeed} RPM";
 
-            switch (_plc.State)
+            CreatePlcs(count);
+        }
+
+        private void ApplyDefaultRpmButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!int.TryParse(DefaultRpmTextBox.Text, out var rpm))
             {
-                case PlcState.Normal:
-                    if (_plc.IsOverheatWarning)
-                    {
-                        StatusLight1.Fill = _overheatFlash ? Brushes.OrangeRed : Brushes.Yellow;
-                        StatusLabel1.Text = "Overheating!";
-                    }
-                    else
-                    {
-                        StatusLight1.Fill = Brushes.Green;
-                        StatusLabel1.Text = "Normal";
-                    }
+                MessageBox.Show("Invalid RPM value", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-                    TargetSpeedSlider1.IsEnabled = true;
-                    StartButton1.IsEnabled = false;
-                    EmergencyStopButton1.IsEnabled = _plc.ActualSpeed > 0;
-                    break;
+            if (rpm < 0) rpm = 0;
+            if (rpm > 2000) rpm = 2000;
 
-                case PlcState.EmergencyStop:
-                    StatusLight1.Fill = Brushes.Red;
-                    StatusLabel1.Text = "Emergency Stop";
+            foreach (var plc in _plcs)
+            {
+                plc.TargetSpeed = rpm;
+            }
+        }
 
-                    TargetSpeedSlider1.IsEnabled = false;
-                    StartButton1.IsEnabled = _plc.Temperature < PlcSimulator.TemperatureLimit;
-                    EmergencyStopButton1.IsEnabled = false;
-                    break;
-
-                case PlcState.MaintenanceNeeded:
-                    StatusLight1.Fill = Brushes.Yellow;
-                    StatusLabel1.Text = "Maintenance Needed";
-
-                    TargetSpeedSlider1.IsEnabled = false;
-                    StartButton1.IsEnabled = false;
-                    EmergencyStopButton1.IsEnabled = false;
-                    break;
+        private void StopAllButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            foreach (var plc in _plcs)
+            {
+                plc.ManualEmergencyStopRequested = true;
             }
         }
     }
