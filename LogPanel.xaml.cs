@@ -42,6 +42,7 @@ namespace Technoteam
             cmd.CommandText = "DELETE FROM PlcLog;";
             cmd.ExecuteNonQuery();
             _logEntries.Clear();
+            StatusTextBlock.Text = "All logs deleted.";
         }
 
         public void SetPlcCount(int count)
@@ -115,6 +116,9 @@ namespace Technoteam
             sql += " ORDER BY TimestampUtc DESC";
             cmd.CommandText = sql;
 
+            int totalCount = 0;
+            int alarmCount = 0;
+
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -130,8 +134,12 @@ namespace Technoteam
                 };
 
                 _logEntries.Add(entry);
-            }
-        }
+                totalCount++;
+                if (entry.State != "Normal" || entry.Temperature >= PlcSimulator.TemperatureLimit)
+                    alarmCount++;
 
+            }
+            StatusTextBlock.Text = totalCount == 0 ? "No logs found for the selected filters." : $"Loaded {totalCount} rows, of which {alarmCount} were alarms.";
+        }
     }
 }
