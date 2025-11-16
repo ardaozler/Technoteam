@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Technoteam"
         mc:Ignorable="d"
-        Title="Technoteam WPF Demo" SizeToContent="WidthAndHeight" Height="450" Width="800" FontFamily="Microsoft YaHei" FontSize="24">
+        Title="Technoteam WPF Demo" SizeToContent="WidthAndHeight" Height="600" Width="800" FontFamily="Microsoft YaHei" FontSize="24">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <Grid>
@@ -48,7 +48,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                         <Button x:Name="StartButton1" Content="Start" Width="100" Height="40" Margin="0,0,10,0"/>
-                        <Button x:Name="EmergencyStopButton1" Content="Emergency Stop" Background="Red"  Width="100" Height="40"/>
+                        <Button x:Name="EmergencyStopButton1" Content="Emergency Stop" Background="Red"  Width="200" Height="40"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
