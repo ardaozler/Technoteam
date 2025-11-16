@@ -30,7 +30,7 @@ namespace Technoteam
 
         private void ClearLogsButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("THIS WILL DROP ALL TABLES \n ARE YOU SURE?", "Drop Tables?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show("This will delete ALL log records. Are you sure?", "Delete All Rows?", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result != MessageBoxResult.Yes)
                 return;
